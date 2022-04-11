@@ -1,0 +1,23 @@
+Package: prodmse
+Type: Package
+Title: Management Strategy Evaluation (MSE) with production-based operating models
+Version: 0.0.1
+Date: 2022-04-11
+Authors@R: c(person(given="Tobias Karl",
+                    family="Mildenberger",
+                    email="tobm@aqua.dtu.dk",
+                    role=c("aut","cre","cph"),
+                    comment=c(ORCID="0000-0002-6631-7524")),
+             person(given="Henrik",
+                    family="Sparholt",
+                    email="henrik.sparholt@gmail.com",
+                    role=c("aut")))
+Description: Runs MSE with a production-based operating model.
+License: GPL (>=3)
+Depends:
+    R (>= 3.0)
+Suggests:
+    parallel
+LazyData: true
+Encoding: UTF-8
+RoxygenNote: 7.1.1
