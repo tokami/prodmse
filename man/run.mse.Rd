@@ -4,16 +4,14 @@
 \alias{run.mse}
 \title{Run MSE}
 \usage{
-run.mse(pars, proyears = 5, nsim = 10, ncores = 1)
+run.mse(pars, mc.cores = 1, verbose = TRUE)
 }
 \arguments{
 \item{pars}{HERE:}
 
-\item{proyears}{HERE:}
+\item{mc.cores}{HERE:}
 
-\item{nsim}{HERE:}
-
-\item{ncores}{HERE:}
+\item{verbose}{Print information}
 }
 \description{
 Run MSE

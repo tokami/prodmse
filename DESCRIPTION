@@ -16,6 +16,9 @@ Description: Runs MSE with a production-based operating model.
 License: GPL (>=3)
 Depends:
     R (>= 3.0)
+Imports:
+    snow,
+    snowfall
 Suggests:
     parallel
 LazyData: true

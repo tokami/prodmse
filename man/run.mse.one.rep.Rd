@@ -4,16 +4,14 @@
 \alias{run.mse.one.rep}
 \title{Run one MSE rep}
 \usage{
-run.mse.one.rep(x, pars, proyears = 5, first.tb.is.obs = TRUE)
+run.mse.one.rep(x, pars, first.esb.is.obs = TRUE)
 }
 \arguments{
 \item{x}{HERE:}
 
 \item{pars}{HERE:}
 
-\item{proyears}{HERE:}
-
-\item{first.tb.is.obs}{logical, HERE:}
+\item{first.esb.is.obs}{logical, HERE:}
 }
 \description{
 Run one MSE rep

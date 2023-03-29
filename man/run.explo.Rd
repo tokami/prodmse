@@ -10,7 +10,7 @@ run.explo(
   fmsy = seq(0.1, 1, 0.05),
   btrigger = seq(1000, 5000, 200),
   nsim = NULL,
-  ncores = 1
+  mc.cores = 1
 )
 }
 \arguments{
@@ -24,7 +24,7 @@ run.explo(
 
 \item{nsim}{HERE:}
 
-\item{ncores}{HERE:}
+\item{mc.cores}{HERE:}
 }
 \description{
 Run explo

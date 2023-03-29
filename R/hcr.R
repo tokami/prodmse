@@ -1,27 +1,37 @@
-#' @title Apply management stratey (MS)
+#' @title Apply harvest control rule (HCR)
 #
-#' @description Apply management strategy (MS)
+#' @description Apply harvest control rule (HCR)
 #'
-#' @param F HERE:
-#' @param MStype HERE:
-#' @param SSB HERE:
-#' @param Bpa HERE:
+#' @param HCR HCR type
+#' @param biomass Curent biomass (either SSB or ESB) should correspond to biomass type in refs!
+#' @param refs Reference points, should contain Fmsy, Bpa, Blim
 #'
 #' @export
-apply.ms <- function(F, MStype = "noF", SSB = NA, Bpa = NA){
-    switch(as.character(MStype),
+apply.hcr <- function(HCR = "noF", biomass = NULL, biomass.blim = NULL, refs = NULL){
+    switch(as.character(HCR),
            ## Fish at FMSY
            "noF" = {
                return(0.0)
            },
            ## Fish at FMSY
            "FMSY" = {
-               return(F)
+               return(refs$Fmsy)
            },
-           ## Fish at FMSY with linear reduction if SSB < Bpa
+           ## Fish at FMSY with linear reduction if SSB < Btrigger
            "ICES" = {
-               return(ifelse(SSB > Bpa, F, F * SSB/Bpa))
+               return(ifelse(biomass > refs$Btrigger, refs$Fmsy, refs$Fmsy * biomass/refs$Btrigger))
            },
-           stop("MStype not known!")
+           "ICES2" = {
+               if(is.null(biomass.blim)){
+                   return(ifelse(biomass > refs$Btrigger, refs$Fmsy, refs$Fmsy * biomass/refs$Btrigger))
+               }else{
+                   return(ifelse(biomass.blim < refs$Blim, 0,
+                          ifelse(biomass > refs$Btrigger, refs$Fmsy, refs$Fmsy * biomass/refs$Btrigger)))
+               }
+           },
+           "ICES3" = {
+               return(ifelse(biomass > refs$Btrigger, refs$Fmsy, refs$Fmsy * biomass/refs$Btrigger))
+           },
+           stop("HCR not implemented!")
            )
 }

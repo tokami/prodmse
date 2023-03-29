@@ -2,17 +2,20 @@
 % Please edit documentation in R/utility.R
 \name{calc.prod}
 \alias{calc.prod}
-\title{Calculate production based on Schaefer}
+\title{Calculate production}
 \usage{
-calc.prod(B, r, K)
+calc.prod(B, pars, type = 2)
 }
 \arguments{
 \item{B}{biomass}
 
-\item{r}{intrinsic growth rate}
+\item{pars}{List with parameters (r, K, n) plus m for Fletcher and fmsy for}
 
-\item{K}{carrying capacity}
+\item{type}{Either 1 for "Schaefer", 2 for  "Fletcher" or 3 for "Thorson". Default is 2 ("Fletcher").}
 }
 \description{
-Calculates production based on the Schaefer model
+Calculates production
+}
+\details{
+
 }

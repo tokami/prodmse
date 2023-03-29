@@ -4,7 +4,7 @@
 \alias{run.fmsy}
 \title{Run fmsy}
 \usage{
-run.fmsy(mse, yr = NULL, fmsy = seq(0, 0.6, 0.02), nsim = NULL, ncores = 1)
+run.fmsy(mse, yr = NULL, fmsy = seq(0, 0.6, 0.02), nsim = NULL, mc.cores = 1)
 }
 \arguments{
 \item{mse}{HERE:}
@@ -15,7 +15,7 @@ run.fmsy(mse, yr = NULL, fmsy = seq(0, 0.6, 0.02), nsim = NULL, ncores = 1)
 
 \item{nsim}{HERE:}
 
-\item{ncores}{HERE:}
+\item{mc.cores}{HERE:}
 }
 \description{
 Run fmsy

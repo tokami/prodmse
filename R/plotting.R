@@ -6,13 +6,13 @@
 #' @param mse HERE:
 #'
 #' @export
-plot.td <- function(mse){
+plotprodmse.td <- function(mse){
 
     mse <- res
 
     ##
     nscen <- nrow(mse$scenarios)
-    nms <- length(mse$pars$MStypes)
+    nms <- length(mse$pars$HCR)
     nall <- nscen * nms
     Bpa <- mse$pars$ref[2]
     Blim <- mse$pars$ref[3]
@@ -80,7 +80,7 @@ plot.td <- function(mse){
         if(scen %in% seq(1,nscen,by=parcol)) axis(2)
         if(scen == 1) mtext("Yield", 2, 2.5, outer = TRUE)
         mtext(paste0("Scenario ", scen), 3, 1, font = 2)
-        if(scen == nscen) legend("topright", legend = mse$pars$MStypes,
+        if(scen == nscen) legend("topright", legend = mse$pars$HCR,
                                  col = cols[1:nms], bg="white",
                                  pch = pchs)
     }
@@ -97,18 +97,18 @@ plot.td <- function(mse){
 #' @param mse HERE:
 #'
 #' @export
-plot.ts <- function(mse){
+plotprodmse.ts <- function(mse){
 
     ##
     nscen <- nrow(mse$scenarios)
-    nms <- length(mse$pars$MStypes)
+    nms <- length(mse$pars$HCR)
     nall <- nscen * nms
     Bpa <- mse$pars$ref[2]
     Blim <- mse$pars$ref[3]
 
 
     ##
-    years <- 1:mse$proyears
+    years <- 1:mse$pars$proyears
     cols <- c("darkgreen","dodgerblue","darkorange","purple","red")
 
     ## plot
@@ -133,7 +133,7 @@ plot.ts <- function(mse){
         if(scen == 1) mtext("SSB", 2, 3.5)
         abline(h = Blim, lty=1, col = "grey70")
         mtext(paste0("Scenario ", scen), 3, 1, font = 2)
-        if(scen == nscen) legend("topright", legend = mse$pars$MStypes,
+        if(scen == nscen) legend("topright", legend = mse$pars$HCR,
                                  col = cols[1:nms], bg="white", lwd=1.5)
     }
     ## yield
@@ -208,11 +208,11 @@ plot.ts <- function(mse){
 #' @param mse HERE:
 #'
 #' @export
-plot.dist <- function(mse, outline = TRUE){
+plotprodmse.dist <- function(mse, outline = TRUE){
 
     ##
     nscen <- nrow(mse$scenarios)
-    nms <- length(mse$pars$MStypes)
+    nms <- length(mse$pars$HCR)
     nall <- nscen * nms
     Bpa <- mse$pars$ref[2]
     Blim <- mse$pars$ref[3]
@@ -258,7 +258,7 @@ plot.dist <- function(mse, outline = TRUE){
     tmp2 <- apply(tmp, dimen, function(x) mean(x < Blim, na.rm = TRUE))
     ylim <- range(tmp2,0, na.rm = TRUE)
     for(scen in 1:nscen){
-        if(length(dim(tmp)) == 4) yplot <- tmp2[,,scen,] else yplot <- tmp2
+        if(length(dim(tmp)) == 4) yplot <- tmp2[,scen,] else yplot <- tmp2
         tmp3 <- apply(yplot,1,rbind)
         boxplot(tmp3, ylim = ylim,
                 col = cols[1:nms],
@@ -283,7 +283,7 @@ plot.dist <- function(mse, outline = TRUE){
                 yaxt = "n", ylab = "")
         if(scen == 1) axis(2)
         if(scen == 1) mtext("Yield diff", 2, 3.5)
-        axis(1, at = seq(mse$pars$MStypes), labels = mse$pars$MStypes)
+        axis(1, at = seq(mse$pars$HCR), labels = mse$pars$HCR)
     }
     mtext("Management strategies", 1, 3, outer = TRUE)
 }
@@ -303,7 +303,7 @@ plot.dist <- function(mse, outline = TRUE){
 #' @param rep HERE:
 #'
 #' @export
-plot.ts.single <- function(mse, quant = c("ssbObs","yImp"), col = c("darkorange","goldenrod2"),
+plotprodmse.ts.single <- function(mse, quant = c("ssbObs","yImp"), col = c("darkorange","goldenrod2"),
                            scenario = 1, ms = 1, ylab = "Biomass '000t",
                            yr = NULL, rep = NULL){
 
@@ -324,7 +324,7 @@ plot.ts.single <- function(mse, quant = c("ssbObs","yImp"), col = c("darkorange"
     }
     ylim <- c(0.9,1.1) * range(tmp[years,ms,scenario,quant], na.rm = TRUE)
     quantL <- plyr::revalue(quant, c("ssbObs" = "SSB perceived",
-                                    "yImp" = "Y after Impl error"))
+                                    "yImp" = "Yield after Impl error"))
     ## plot
     opar <- par()
     par(mfrow = c(1,length(scenario)), mar = c(1,1,0,0), oma=c(5,5,4,3))
@@ -345,7 +345,7 @@ plot.ts.single <- function(mse, quant = c("ssbObs","yImp"), col = c("darkorange"
         mtext(ylab, 2, 3.5)
         legend("topright", legend = quantL,
                col = col, bg="white",
-               lwd=1.5, lty = 1:length(ms))
+               lwd=2, lty = 1:length(ms))
     }
     mtext("Projection years", 1, 3, outer = TRUE)
 
@@ -361,11 +361,11 @@ plot.ts.single <- function(mse, quant = c("ssbObs","yImp"), col = c("darkorange"
 #' @param ms HERE:
 #'
 #' @export
-plot.fmsy <- function(x, ms = 1){
+plotprodmse.fmsy <- function(x, ms = 1){
 
     tmp <- x[[ms]]
     nami <- colnames(tmp)
-    tbind <- which(nami == "tb")
+    esbind <- which(nami == "esb")
     ssbind <- which(nami == "ssb")
     yind <- which(nami == "y")
     tacVarind <- which(nami == "tacVar")
@@ -373,19 +373,19 @@ plot.fmsy <- function(x, ms = 1){
     ##
     cex <- 1.3
 
-    ylim1 <- c(0.0,1.1) * range(tmp[,c(tbind,ssbind,yind)],na.rm=TRUE)
+    ylim1 <- c(0.0,1.1) * range(tmp[,c(esbind,ssbind,yind)],na.rm=TRUE)
     ylim2 <- c(0.0,1.1) * range(tmp[,c(tacVarind)],na.rm=TRUE)
 
     par(mfrow=c(1,1), mar = c(5,5,2,5), oma=c(0,0,0,0))
-    plot(tmp[,1], tmp[,tbind],
+    plot(tmp[,1], tmp[,esbind],
          ty = "n",
          xlab = "", ylab = "",
          xaxt = "n", yaxt = "n",
          ylim = ylim1)
-    lines(tmp[,1], tmp[,tbind], ty="l", col="dodgerblue4",pch=16,lwd=1.5,cex=cex)
+    lines(tmp[,1], tmp[,esbind], ty="l", col="dodgerblue4",pch=16,lwd=1.5,cex=cex)
     lines(tmp[,1], tmp[,ssbind], ty="l", col="dodgerblue2",pch=16,lwd=1.5,cex=cex)
     lines(tmp[,1], tmp[,yind], ty="l", col="darkorange",pch=16,lwd=1.5,cex=cex)
-    points(tmp[,1], tmp[,tbind], ty="b", col="dodgerblue4",pch=16,lwd=1.5,cex=cex)
+    points(tmp[,1], tmp[,esbind], ty="b", col="dodgerblue4",pch=16,lwd=1.5,cex=cex)
     points(tmp[,1], tmp[,ssbind], ty="b", col="dodgerblue2",pch=16,lwd=1.5,cex=cex)
     points(tmp[,1], tmp[,yind], ty="b", col="darkorange",pch=16,lwd=1.5,cex=cex)
     axis(1)
@@ -403,9 +403,9 @@ plot.fmsy <- function(x, ms = 1){
     axis(4)
     mtext("Percentage TAC variation",4,3)
     box()
-    legend("topright", legend = c("TB 2050", "SSB 2050", "Yield 2050", "TAC variation (CV) from yr to yr"),
+    legend("topright", legend = c("ESB 2050", "SSB 2050", "Yield 2050", "TAC variation (CV) from yr to yr"),
            col = c("dodgerblue4","dodgerblue2","darkorange","darkolivegreen4"),
-           lty=1, lwd=1.5, bg = "white")
+           lty=1, lwd=2, bg = "white")
 }
 
 
@@ -418,7 +418,7 @@ plot.fmsy <- function(x, ms = 1){
 #' @param ms HERE:
 #'
 #' @export
-plot.fmsy2 <- function(x, ms = 1){
+plotprodmse.fmsy2 <- function(x, ms = 1){
 
     tmp <- x[[ms]]
     nami <- colnames(tmp)
@@ -439,7 +439,7 @@ plot.fmsy2 <- function(x, ms = 1){
          xlab = "", ylab = "",
          xaxt = "n", yaxt = "n",
          ylim = ylim1)
-    abline(h = pars$refs[3], lwd=1.5, col = "darkred")
+    abline(h = pars$refs[[3]], lwd=1.5, col = "darkred")
     lines(tmp[,1], tmp[,ssbind], ty="l", col="dodgerblue2",pch=16,lwd=1.5,cex=cex)
     lines(tmp[,1], tmp[,ssb5ind], ty="l", col="dodgerblue4",pch=16,lwd=1.5,cex=cex)
     points(tmp[,1], tmp[,ssbind], ty="b", col="dodgerblue2",pch=16,lwd=1.5,cex=cex)
@@ -461,7 +461,7 @@ plot.fmsy2 <- function(x, ms = 1){
     box()
     legend("topright", legend = c("SSB 2050", "5% Percentile SSB 2050", "Blim", "Yield 2050"),
            col = c("dodgerblue2","dodgerblue4","darkred","darkorange"),
-           lty=1, lwd=1.5, bg = "white")
+           lty=1, lwd=2, bg = "white")
 
 }
 
@@ -475,18 +475,24 @@ plot.fmsy2 <- function(x, ms = 1){
 #' @param pars HERE:
 #' @param ms HERE:
 #'
+#' @importFrom RColorBrewer brewer.pal
+#'
 #' @export
-plot.explo <- function(x, pars, ms = 1){
-    x <- x[[ms]]
+plotprodmse.explo <- function(x, pars, ms = 1, scen = 1,
+                              yield.unit = 1, ssb.unit = 1,
+                              btrigger.unit = 1, digits = 3){
+
+    x <- x[[ms]][[scen]]
     x <- x[order(x$Fmsy),]
     x <- x[order(x$Btrigger),]
+    x$Btrigger <- x$Btrigger / btrigger.unit
     n <- nrow(x)
     uniF <- unique(x$Fmsy)
     nF <- length(uniF)
     uniB <- unique(x$Btrigger)
     nB <- length(uniB)
-    fmsy <- pars$refs[1]
-    btrigger <- pars$refs[4]
+    fmsy <- pars$refs[[1]]
+    btrigger <- pars$refs[[4]] / btrigger.unit
 
     find <- which.min(abs(uniF-fmsy))
     polyF <- uniF[find] + c(-1,1) * diff(uniF)[c(find,find+1)]/2
@@ -496,21 +502,21 @@ plot.explo <- function(x, pars, ms = 1){
 
     ##
     cexText <- 0.95
-    col <- brewer.pal(10, "RdYlGn")[-c(1:2,9:10)]
-    ncol <- length(col)
+    col <- RColorBrewer::brewer.pal(10, "RdYlGn")[-c(1:2,9:10)]
+    ncols <- length(col)
 
     opar <- par(no.readonly = TRUE)
     layout(matrix(1:4,ncol=2,nrow=2,byrow=TRUE),
            widths = c(7,7), heights = c(7,7))
     on.exit(par(opar))
-    par(mar = c(6,6,5,2))
+    par(mar = c(3.5,3,3,1), oma = c(3,3,1,1))
 
     ## yImp
     quant <- "yImp"
     subx <- as.data.frame(cbind(Fmsy = x$Fmsy, Btrigger = x$Btrigger, z = x[quant]))
     tab <- as.matrix(reshape2::dcast(subx, Btrigger ~ Fmsy)[,-1])
     zlim <- range(tab)
-    breaks <- seq(zlim[1], zlim[2], length.out = ncol+1)
+    breaks <- seq(zlim[1], zlim[2], length.out = ncols+1)
     ## par(mar = c(6,6,5,0.4))
     plot(x$Btrigger, x$Fmsy, ty='n',
          xaxt="n", yaxt="n",
@@ -521,13 +527,21 @@ plot.explo <- function(x, pars, ms = 1){
     polygon(x = c(polyB,rev(polyB)),
             y = rep(polyF,each=2),
              lwd = 1.3)
-    text(x$Btrigger, x$Fmsy, labels=round(x[[quant]]),
-         col = ifelse(x$risk > 0.05, "red", "black"), cex = cexText)
+    text(x$Btrigger, x$Fmsy, labels=signif(x[[quant]] / yield.unit,digits),
+         col = ifelse(x$risk > 0.05, "darkred", "black"), cex = cexText)
     axis(1, cex.axis=1.1)
     axis(2, cex.axis=1.1)
-    mtext(bquote(B[triggger]),1,3,cex=1.3)
-    mtext(bquote(F[target]),2,3,cex=1.3)
-    mtext("Yield after Implementation error", 3, 1, font=2,cex=1.2)
+    ## mtext(bquote(B[triggger]),1,3,cex=1.3)
+    ## mtext(bquote(F[target]),2,3,cex=1.3)
+    if(yield.unit == 1){
+        addi <- "[t]"
+    }else if(yield.unit == 1e3){
+        addi <- "['000t]"
+    }else if(yield.unit == 1e6){
+        addi <- "[Mt]"
+    }
+    mtext(paste0("Yield after Implementation error ",addi),
+          3, 1, font=2,cex=1.2)
     ## par(mar = c(6,0.2,5,4))
     ## imageScale(z = tab, ylim = zlim, zlim = zlim, col = col, breaks = breaks,
     ##            axis.pos = 4)
@@ -538,7 +552,7 @@ plot.explo <- function(x, pars, ms = 1){
     tab <- as.matrix(reshape2::dcast(subx, Btrigger ~ Fmsy)[,-1])
     tab[tab > 0.05] <- 0.051
     zlim <- c(0,0.05)
-    breaks <- c(seq(zlim[1], zlim[2], length.out = ncol),1e6)
+    breaks <- c(seq(zlim[1], zlim[2], length.out = ncols),1e6)
     ## par(mar = c(6,6,5,0.4))
     plot(x$Btrigger, x$Fmsy, ty='n',
          xaxt="n", yaxt="n",
@@ -549,12 +563,12 @@ plot.explo <- function(x, pars, ms = 1){
     polygon(x = c(polyB,rev(polyB)),
             y = rep(polyF,each=2),
              lwd = 1.3)
-    text(x$Btrigger, x$Fmsy, labels=round(x[[quant]],3),
-         col = ifelse(x$risk > 0.05, "red", "black"), cex = cexText)
+    text(x$Btrigger, x$Fmsy, labels=round(x[[quant]],2),
+         col = ifelse(x$risk > 0.05, "darkred", "black"), cex = cexText)
     axis(1, cex.axis=1.1)
     axis(2, cex.axis=1.1)
-    mtext(bquote(B[triggger]),1,3,cex=1.3)
-    mtext(bquote(F[target]),2,3,cex=1.3)
+    ## mtext(bquote(B[triggger]),1,3,cex=1.3)
+    ## mtext(bquote(F[target]),2,3,cex=1.3)
     mtext("Risk", 3, 1, font=2,cex=1.2)
     ## par(mar = c(6,0.2,5,4))
     ## imageScale(z = tab, ylim = zlim, zlim = zlim, col = rev(col), breaks = breaks,
@@ -566,7 +580,7 @@ plot.explo <- function(x, pars, ms = 1){
     subx <- as.data.frame(cbind(Fmsy = x$Fmsy, Btrigger = x$Btrigger, z = x[quant]))
     tab <- as.matrix(reshape2::dcast(subx, Btrigger ~ Fmsy)[,-1])
     zlim <- range(tab)
-    breaks <- seq(zlim[1], zlim[2], length.out = ncol+1)
+    breaks <- seq(zlim[1], zlim[2], length.out = ncols+1)
     ## par(mar = c(6,6,5,0.4))
     plot(x$Btrigger, x$Fmsy, ty='n',
          xaxt="n", yaxt="n",
@@ -577,45 +591,61 @@ plot.explo <- function(x, pars, ms = 1){
     polygon(x = c(polyB,rev(polyB)),
             y = rep(polyF,each=2),
              lwd = 1.3)
-    text(x$Btrigger, x$Fmsy, labels=round(x[[quant]]),
-         col = ifelse(x$risk > 0.05, "red", "black"), cex = cexText)
+    text(x$Btrigger, x$Fmsy, labels=signif(x[[quant]],digits),
+         col = ifelse(x$risk > 0.05, "darkred", "black"), cex = cexText)
     axis(1, cex.axis=1.1)
     axis(2, cex.axis=1.1)
-    mtext(bquote(B[triggger]),1,3,cex=1.3)
-    mtext(bquote(F[target]),2,3,cex=1.3)
+    ## mtext(bquote(B[triggger]),1,3,cex=1.3)
+    ## mtext(bquote(F[target]),2,3,cex=1.3)
     mtext("Inter-annual catch variability", 3, 1, font=2,cex=1.2)
     ## par(mar = c(6,0.2,5,4))
     ## imageScale(z = tab, ylim = zlim, zlim = zlim, col = rev(col), breaks = breaks,
     ##             axis.pos = 4)
 
-
     ## SSB
     quant <- "ssb"
     subx <- as.data.frame(cbind(Fmsy = x$Fmsy, Btrigger = x$Btrigger, z = x[quant]))
     tab <- as.matrix(reshape2::dcast(subx, Btrigger ~ Fmsy)[,-1])
-    tab[tab < pars$refs[3]] <- pars$refs[3]
-    tab[tab > pars$refs[2]] <- pars$refs[2]
-    zlim <- c(pars$refs[3], pars$refs[2])
-    breaks <- c(seq(pars$refs[3], pars$refs[2], length.out = ncol+1))
+    tab[tab < pars$refs[[3]]] <- pars$refs[[3]]
+    tab[tab > pars$refs[[2]]] <- pars$refs[[2]]
+    zlim <- c(pars$refs[[3]], pars$refs[[2]])
+    breaks <- seq(pars$refs[[3]], pars$refs[[2]], length.out = ncols+1)
     ## par(mar = c(6,6,5,0.4))
     plot(x$Btrigger, x$Fmsy, ty='n',
          xaxt="n", yaxt="n",
          xlab="",ylab="")
-    image(uniB, uniF, tab, zlim=zlim, breaks=breaks,add = TRUE, col = col)
+    image(uniB, uniF, tab, zlim = zlim, breaks = breaks, add = TRUE, col = col)
     abline(v = uniB[-nB] + diff(uniB)/2, col = "grey80", lty=2)
     abline(h = uniF[-nF] + diff(uniF)/2, col = "grey80", lty=2)
     polygon(x = c(polyB,rev(polyB)),
             y = rep(polyF,each=2),
              lwd = 1.3)
-    text(x$Btrigger, x$Fmsy, labels=round(x[[quant]]),
-         col = ifelse(x$risk > 0.05, "red", "black"), cex = cexText)
+    text(x$Btrigger, x$Fmsy, labels=signif(x[[quant]] / ssb.unit, digits),
+         col = ifelse(x$risk > 0.05, "darkred", "black"), cex = cexText)
     axis(1, cex.axis=1.1)
     axis(2, cex.axis=1.1)
-    mtext(bquote(B[triggger]),1,3,cex=1.3)
-    mtext(bquote(F[target]),2,3,cex=1.3)
-    mtext("SSB", 3, 1, font=2,cex=1.2)
+    ## mtext(bquote(B[triggger]),1,3,cex=1.3)
+    ## mtext(bquote(F[target]),2,3,cex=1.3)
+    if(ssb.unit == 1){
+        addi <- "[t]"
+    }else if(ssb.unit == 1e3){
+        addi <- "['000t]"
+    }else if(ssb.unit == 1e6){
+        addi <- "[Mt]"
+    }
+    mtext(paste0("SSB ",addi), 3, 1, font=2,cex=1.2)
     ## par(mar = c(6,0.2,5,4))
     ## imageScale(z = tab, ylim = zlim, zlim = zlim, col = col, breaks = breaks,
     ##            axis.pos = 4)
+
+    if(btrigger.unit == 1){
+        addi <- "[t]"
+    }else if(btrigger.unit == 1e3){
+        addi <- "['000t]"
+    }else if(btrigger.unit == 1e6){
+        addi <- "[Mt]"
+    }
+    mtext(bquote(B[triggger]~.(addi)),1,1,cex=1.3, outer = TRUE)
+    mtext(bquote(F[target] ~ "["*yr^{-1}*"]"),2,0,cex=1.3, outer = TRUE)
 
 }

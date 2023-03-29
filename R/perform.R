@@ -5,8 +5,8 @@
 #' @param mse HERE:
 #'
 #' @export
-perform.tb <- function(mse){
-    tmp <- mse$est[,,,"tb",]
+perform.esb <- function(mse){
+    tmp <- mse$est[,,,"esb",]
     if(length(dim(tmp)) == 4) dimen <- 1:3 else dimen <- 1:2
     res <- apply(tmp, dimen, function(x) c(mean(x, na.rm=TRUE),
                                             quantile(x, probs = c(0.025,0.5,0.975), na.rm=TRUE),
@@ -102,8 +102,8 @@ perform <- function(mse){
     ## Checks
     if(!any(names(mse) == "est")) stop("Estimates missing. Did you run 'run.mse'?")
 
-    ## TB
-    tb <- perform.tb(mse)
+    ## ESB
+    esb <- perform.esb(mse)
 
     ## SSB
     ssb <- perform.ssb(mse)
@@ -118,7 +118,7 @@ perform <- function(mse){
     yielddiff <- perform.yielddiff(mse)
 
     ## Return results
-    res <- list(tb = tb, ssb = ssb, yield = yield, risk = risk, yielddiff = yielddiff)
+    res <- list(esb = esb, ssb = ssb, yield = yield, risk = risk, yielddiff = yielddiff)
     return(res)
 
 }
