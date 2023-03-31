@@ -361,9 +361,11 @@ plotprodmse.ts.single <- function(mse, quant = c("ssbObs","yImp"), col = c("dark
 #' @param ms HERE:
 #'
 #' @export
-plotprodmse.fmsy <- function(x, ms = 1){
+plotprodmse.fmsy <- function(x, ms = 1, scen = 1,
+                             b.unit = 1
+                             ){
 
-    tmp <- x[[ms]]
+    tmp <- x[[ms]][[scen]]
     nami <- colnames(tmp)
     esbind <- which(nami == "esb")
     ssbind <- which(nami == "ssb")
@@ -390,8 +392,15 @@ plotprodmse.fmsy <- function(x, ms = 1){
     points(tmp[,1], tmp[,yind], ty="b", col="darkorange",pch=16,lwd=1.5,cex=cex)
     axis(1)
     axis(2)
-    mtext("F",1,3)
-    mtext("Biomass '000 t",2,3)
+    mtext(expression("F ["*yr^{-1}*"]"),1,3)
+    if(b.unit == 1){
+        addi <- "[t]"
+    }else if(b.unit == 1e3){
+        addi <- "['000t]"
+    }else if(b.unit == 1e6){
+        addi <- "[Mt]"
+    }
+    mtext(paste0("Biomass ",addi), 2, 3)
     par(new=TRUE)
     plot(tmp[,1], tmp[,tacVarind],
          ty = "n",axes = FALSE,
@@ -401,9 +410,10 @@ plotprodmse.fmsy <- function(x, ms = 1){
     lines(tmp[,1], tmp[,tacVarind], ty="l", col="darkolivegreen4",pch=16,lwd=1.5,cex=cex)
     points(tmp[,1], tmp[,tacVarind], ty="b", col="darkolivegreen4",pch=16,lwd=1.5,cex=cex)
     axis(4)
-    mtext("Percentage TAC variation",4,3)
+    mtext("Interannual catch variability [%]",4,3)
     box()
-    legend("topright", legend = c("ESB 2050", "SSB 2050", "Yield 2050", "TAC variation (CV) from yr to yr"),
+    legend("topright", legend = c("ESB", "SSB",
+                                  "Catch", "Catch variability"),
            col = c("dodgerblue4","dodgerblue2","darkorange","darkolivegreen4"),
            lty=1, lwd=2, bg = "white")
 }
@@ -418,9 +428,11 @@ plotprodmse.fmsy <- function(x, ms = 1){
 #' @param ms HERE:
 #'
 #' @export
-plotprodmse.fmsy2 <- function(x, ms = 1){
+plotprodmse.fmsy2 <- function(x, ms = 1, scen = 1,
+                              b.unit = 1, c.unit = 1
+                              ){
 
-    tmp <- x[[ms]]
+    tmp <- x[[ms]][[scen]]
     nami <- colnames(tmp)
     ssbind <- which(nami == "ssb")
     ssb5ind <- which(nami == "ssbObsQuant5")
@@ -430,8 +442,8 @@ plotprodmse.fmsy2 <- function(x, ms = 1){
     ##
     cex <- 1.3
 
-    ylim1 <- c(0.0,1.1) * range(tmp[,c(ssbind,ssb5ind)],na.rm=TRUE)
-    ylim2 <- c(0.0,1.1) * range(tmp[,c(yind)],na.rm=TRUE)
+    ylim1 <- c(0.0,1.1) * range(tmp[,c(ssbind,ssb5ind)] / b.unit,na.rm=TRUE)
+    ylim2 <- c(0.0,1.1) * range(tmp[,c(yind)] / c.unit,na.rm=TRUE)
 
     par(mfrow=c(1,1), mar = c(5,5,2,5), oma=c(0,0,0,0))
     plot(tmp[,1], tmp[,ssbind],
@@ -439,27 +451,50 @@ plotprodmse.fmsy2 <- function(x, ms = 1){
          xlab = "", ylab = "",
          xaxt = "n", yaxt = "n",
          ylim = ylim1)
-    abline(h = pars$refs[[3]], lwd=1.5, col = "darkred")
-    lines(tmp[,1], tmp[,ssbind], ty="l", col="dodgerblue2",pch=16,lwd=1.5,cex=cex)
-    lines(tmp[,1], tmp[,ssb5ind], ty="l", col="dodgerblue4",pch=16,lwd=1.5,cex=cex)
-    points(tmp[,1], tmp[,ssbind], ty="b", col="dodgerblue2",pch=16,lwd=1.5,cex=cex)
-    points(tmp[,1], tmp[,ssb5ind], ty="b", col="dodgerblue4",pch=16,lwd=1.5,cex=cex)
+    abline(h = pars$refs[[3]] / b.unit, lwd=1.5, col = "darkred")
+    lines(tmp[,1], tmp[,ssbind] / b.unit, ty="l",
+          col="dodgerblue2",pch=16,lwd=1.5,cex=cex)
+    lines(tmp[,1], tmp[,ssb5ind] / b.unit, ty="l",
+          col="dodgerblue4",pch=16,lwd=1.5,cex=cex)
+    points(tmp[,1], tmp[,ssbind] / b.unit, ty="b",
+           col="dodgerblue2",pch=16,lwd=1.5,cex=cex)
+    points(tmp[,1], tmp[,ssb5ind] / b.unit, ty="b",
+           col="dodgerblue4",pch=16,lwd=1.5,cex=cex)
     axis(1)
     axis(2)
-    mtext("F",1,3)
-    mtext("Biomass '000 t",2,3)
+    mtext(expression("F ["*yr^{-1}*"]"),1,3)
+    if(b.unit == 1){
+        addi <- "[t]"
+    }else if(b.unit == 1e3){
+        addi <- "['000t]"
+    }else if(b.unit == 1e6){
+        addi <- "[Mt]"
+    }
+    mtext(paste0("Biomass ",addi), 2, 3)
     par(new=TRUE)
     plot(tmp[,1], tmp[,yind],
          ty = "n",axes = FALSE,
          xlab = "", ylab = "",
          xaxt = "n", yaxt = "n",
          ylim = ylim2)
-    lines(tmp[,1], tmp[,yind], ty="l", col="darkorange",pch=16,lwd=1.5,cex=cex)
-    points(tmp[,1], tmp[,yind], ty="b", col="darkorange",pch=16,lwd=1.5,cex=cex)
+    lines(tmp[,1], tmp[,yind] / c.unit, ty="l",
+          col="darkorange",pch=16,lwd=1.5,cex=cex)
+    points(tmp[,1], tmp[,yind] / c.unit, ty="b",
+           col="darkorange",pch=16,lwd=1.5,cex=cex)
     axis(4)
-    mtext("Yield '000 t",4,3)
+    if(c.unit == 1){
+        addi <- "[t]"
+    }else if(c.unit == 1e3){
+        addi <- "['000t]"
+    }else if(c.unit == 1e6){
+        addi <- "[Mt]"
+    }
+    mtext(paste0("Catch ",addi),4,3)
     box()
-    legend("topright", legend = c("SSB 2050", "5% Percentile SSB 2050", "Blim", "Yield 2050"),
+    legend("topright", legend = list("SSB",
+                                     "5% Perc. of SSB",
+                                     expression(B[lim]),
+                                     "Catch"),
            col = c("dodgerblue2","dodgerblue4","darkred","darkorange"),
            lty=1, lwd=2, bg = "white")
 
@@ -540,7 +575,7 @@ plotprodmse.explo <- function(x, pars, ms = 1, scen = 1,
     }else if(yield.unit == 1e6){
         addi <- "[Mt]"
     }
-    mtext(paste0("Yield after Implementation error ",addi),
+    mtext(paste0("Catch after Implementation error ",addi),
           3, 1, font=2,cex=1.2)
     ## par(mar = c(6,0.2,5,4))
     ## imageScale(z = tab, ylim = zlim, zlim = zlim, col = col, breaks = breaks,
@@ -597,7 +632,7 @@ plotprodmse.explo <- function(x, pars, ms = 1, scen = 1,
     axis(2, cex.axis=1.1)
     ## mtext(bquote(B[triggger]),1,3,cex=1.3)
     ## mtext(bquote(F[target]),2,3,cex=1.3)
-    mtext("Inter-annual catch variability", 3, 1, font=2,cex=1.2)
+    mtext("Inter-annual catch variability [%]", 3, 1, font=2,cex=1.2)
     ## par(mar = c(6,0.2,5,4))
     ## imageScale(z = tab, ylim = zlim, zlim = zlim, col = rev(col), breaks = breaks,
     ##             axis.pos = 4)

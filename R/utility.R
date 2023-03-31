@@ -215,39 +215,75 @@ run.fmsy <- function(mse, yr = NULL, fmsy = seq(0,0.6,0.02), nsim = NULL, mc.cor
 
     pars$nsim <- nsim
 
-    if(mc.cores > 1){
+    scenarios.par <- define.scenarios(pars)
+    nscen.par <- nrow(scenarios.par)
+    nms <- length(pars$HCR)
 
-        tmp0 <- mclapply.all.os(as.list(1:length(fmsy)),
-                      function(x, pars){
-                          pars$refs[1] <- fmsy[x]
-                          run.mse(pars, mc.cores = 1)
-                      }, pars = pars, mc.cores = mc.cores)
+    ## Run
+    ## if(mc.cores > 1){
 
-    }else{
+    ##     tmp0 <- mclapply.all.os(as.list(1:length(fmsy)),
+    ##                   function(x, pars){
+    ##                       pars$refs[1] <- fmsy[x]
+    ##                       run.mse(pars, mc.cores = 1)
+    ##                   }, pars = pars, mc.cores = mc.cores)
+
+    ## }else{
 
         tmp0 <- lapply(1:length(fmsy),
                       function(x, pars){
                           pars$refs[1] <- fmsy[x]
-                          run.mse(pars, mc.cores = 1)
+                          run.mse(pars, mc.cores = mc.cores)
                       }, pars = pars)
 
-    }
+    ## }
 
-    res <- array(NA, c(length(fmsy),dims[4]+1,dims[2]))
-    for(fs in 1:length(fmsy)){
+    res <- array(NA, c(nms,nscen.par,length(fmsy),dims[4]+1))
+    for(ms in 1:nms){
+        for(scen.par in 1:nscen.par){
+            for(fs in 1:length(fmsy)){
         tmp <- tmp0[[fs]]
-        res[fs,1:11,] <- t(apply(tmp$est[years,,,,,drop=FALSE], c(2,4), mean, na.rm = TRUE))
-        tmp2 <- t(apply(tmp$est[years,,,,,drop=FALSE], c(2,4), sd, na.rm = TRUE))
-        res[fs,9,] <- tmp2[9,] * 100 / res[fs,4,]  ## SE of tacVar * 100 / mean of yImp
-        tmp2 <- t(apply(tmp$est[years,,,,,drop=FALSE], c(2,4), quantile, probs = 0.05 , na.rm = TRUE))
-        res[fs,12,] <- tmp2[8,]
+        res[ms,scen.par,fs,1:11] <- t(apply(tmp$est[years,ms,scen.par,,,drop=FALSE],
+                                 c(2,4), mean, na.rm = TRUE))
+        tmp2 <- t(apply(tmp$est[years,ms,scen.par,,,drop=FALSE],
+                        c(2,4), sd, na.rm = TRUE))
+        res[ms,scen.par,fs,9] <- tmp2[9,] * 100 / res[ms,scen.par,fs,4]  ## SE of tacVar * 100 / mean of yImp
+        tmp2 <- t(apply(tmp$est[years,ms,scen.par,,,drop=FALSE],
+                        c(2,4), quantile, probs = 0.05 , na.rm = TRUE))
+        res[ms,scen.par,fs,12] <- tmp2[8,]
+            }
+        }
     }
 
-    ret <- list()
-    for(i in 1:dim(res)[3]){
-        ret[[i]] <- cbind(fmsy,res[,,i])
-        colnames(ret[[i]]) <- c("Fmsy",names(mse$est[1,1,1,,1]),"ssbObsQuant5")
+    ## res <- array(NA, c(length(fmsy),dims[4]+1,dims[2]))
+    ## for(fs in 1:length(fmsy)){
+    ##     tmp <- tmp0[[fs]]
+    ##     res[fs,1:11,] <- t(apply(tmp$est[years,,,,,drop=FALSE], c(2,4), mean, na.rm = TRUE))
+    ##     tmp2 <- t(apply(tmp$est[years,,,,,drop=FALSE], c(2,4), sd, na.rm = TRUE))
+    ##     res[fs,9,] <- tmp2[9,] * 100 / res[fs,4,]  ## SE of tacVar * 100 / mean of yImp
+    ##     tmp2 <- t(apply(tmp$est[years,,,,,drop=FALSE], c(2,4), quantile, probs = 0.05 , na.rm = TRUE))
+    ##     res[fs,12,] <- tmp2[8,]
+    ## }
+
+
+    ret <- vector("list",nms)
+    names(ret) <- pars$HCR
+    for(ms in 1:nms){
+        ret[[ms]] <- vector("list",nscen.par)
+        names(ret[[ms]]) <- paste0("scen_",seq(nscen.par))
+        for(scen.par in 1:nscen.par){
+            ret[[ms]][[scen.par]] <- cbind(fmsy,res[ms,scen.par,,])
+            colnames(ret[[ms]][[scen.par]]) <- c("Fmsy",
+                                                 names(mse$est[1,1,1,,1]),
+                                                 "ssbObsQuant5")
+        }
     }
+
+    ## ret <- list()
+    ## for(i in 1:dim(res)[3]){
+    ##     ret[[i]] <- cbind(fmsy,res[,,i])
+    ##     colnames(ret[[i]]) <- c("Fmsy",names(mse$est[1,1,1,,1]),"ssbObsQuant5")
+    ## }
 
     return(ret)
 
