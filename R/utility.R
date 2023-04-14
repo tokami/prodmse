@@ -150,7 +150,9 @@ est.pars.esb2ssb <- function(data, plot = TRUE, log = FALSE, verbose = TRUE){
         data$ESB <- data$esb
     }
     if(!any(colnames(data) == "F")){
-        data$F <- data$fbar
+##        data$F <- data$fbar
+        ## NEW:
+        data$F <- data$catch / data$ESB
     }
 
     if(log){
@@ -165,7 +167,8 @@ est.pars.esb2ssb <- function(data, plot = TRUE, log = FALSE, verbose = TRUE){
         }
     }
 
-    opt <- nlminb(c(0,0,0), func, SSB = data[,"SSB"], ESB = data[,"ESB"], F = data[,"F"], log = log)
+    opt <- nlminb(c(0,0,0), func, SSB = data[,"SSB"],
+                  ESB = data[,"ESB"], F = data[,"F"], log = log)
     res <- c(pars = list(opt$par), list(log = log))
 
     if(verbose) writeLines(paste0(opt$message))
