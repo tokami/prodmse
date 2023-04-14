@@ -384,12 +384,12 @@ plotprodmse.fmsy <- function(x, ms = 1, scen = 1,
          xlab = "", ylab = "",
          xaxt = "n", yaxt = "n",
          ylim = ylim1)
-    lines(tmp[,1], tmp[,esbind], ty="l", col="dodgerblue4",pch=16,lwd=1.5,cex=cex)
-    lines(tmp[,1], tmp[,ssbind], ty="l", col="dodgerblue2",pch=16,lwd=1.5,cex=cex)
-    lines(tmp[,1], tmp[,yind], ty="l", col="darkorange",pch=16,lwd=1.5,cex=cex)
-    points(tmp[,1], tmp[,esbind], ty="b", col="dodgerblue4",pch=16,lwd=1.5,cex=cex)
-    points(tmp[,1], tmp[,ssbind], ty="b", col="dodgerblue2",pch=16,lwd=1.5,cex=cex)
-    points(tmp[,1], tmp[,yind], ty="b", col="darkorange",pch=16,lwd=1.5,cex=cex)
+    lines(tmp[,1], tmp[,esbind], ty="l", col="dodgerblue4",pch=16,lwd=2,cex=cex)
+    lines(tmp[,1], tmp[,ssbind], ty="l", col="dodgerblue2",pch=16,lwd=2,cex=cex)
+    lines(tmp[,1], tmp[,yind], ty="l", col="darkorange",pch=16,lwd=2,cex=cex)
+    ## points(tmp[,1], tmp[,esbind], ty="b", col="dodgerblue4",pch=16,lwd=1.5,cex=cex)
+    ## points(tmp[,1], tmp[,ssbind], ty="b", col="dodgerblue2",pch=16,lwd=1.5,cex=cex)
+    ## points(tmp[,1], tmp[,yind], ty="b", col="darkorange",pch=16,lwd=1.5,cex=cex)
     axis(1)
     axis(2)
     mtext(expression("F ["*yr^{-1}*"]"),1,3)
@@ -407,8 +407,9 @@ plotprodmse.fmsy <- function(x, ms = 1, scen = 1,
          xlab = "", ylab = "",
          xaxt = "n", yaxt = "n",
          ylim = ylim2)
-    lines(tmp[,1], tmp[,tacVarind], ty="l", col="darkolivegreen4",pch=16,lwd=1.5,cex=cex)
-    points(tmp[,1], tmp[,tacVarind], ty="b", col="darkolivegreen4",pch=16,lwd=1.5,cex=cex)
+    lines(tmp[,1], tmp[,tacVarind], ty="l",
+          col="darkolivegreen4",pch=16,lwd=2,cex=cex)
+    ## points(tmp[,1], tmp[,tacVarind], ty="b", col="darkolivegreen4",pch=16,lwd=1.5,cex=cex)
     axis(4)
     mtext("Interannual catch variability [%]",4,3)
     box()
@@ -453,13 +454,13 @@ plotprodmse.fmsy2 <- function(x, ms = 1, scen = 1,
          ylim = ylim1)
     abline(h = pars$refs[[3]] / b.unit, lwd=1.5, col = "darkred")
     lines(tmp[,1], tmp[,ssbind] / b.unit, ty="l",
-          col="dodgerblue2",pch=16,lwd=1.5,cex=cex)
+          col="dodgerblue2",pch=16,lwd=2,cex=cex)
     lines(tmp[,1], tmp[,ssb5ind] / b.unit, ty="l",
-          col="dodgerblue4",pch=16,lwd=1.5,cex=cex)
-    points(tmp[,1], tmp[,ssbind] / b.unit, ty="b",
-           col="dodgerblue2",pch=16,lwd=1.5,cex=cex)
-    points(tmp[,1], tmp[,ssb5ind] / b.unit, ty="b",
-           col="dodgerblue4",pch=16,lwd=1.5,cex=cex)
+          col="dodgerblue4",pch=16,lwd=2,cex=cex)
+    ## points(tmp[,1], tmp[,ssbind] / b.unit, ty="b",
+    ##        col="dodgerblue2",pch=16,lwd=1.5,cex=cex)
+    ## points(tmp[,1], tmp[,ssb5ind] / b.unit, ty="b",
+    ##        col="dodgerblue4",pch=16,lwd=1.5,cex=cex)
     axis(1)
     axis(2)
     mtext(expression("F ["*yr^{-1}*"]"),1,3)
@@ -478,9 +479,9 @@ plotprodmse.fmsy2 <- function(x, ms = 1, scen = 1,
          xaxt = "n", yaxt = "n",
          ylim = ylim2)
     lines(tmp[,1], tmp[,yind] / c.unit, ty="l",
-          col="darkorange",pch=16,lwd=1.5,cex=cex)
-    points(tmp[,1], tmp[,yind] / c.unit, ty="b",
-           col="darkorange",pch=16,lwd=1.5,cex=cex)
+          col="darkorange",pch=16,lwd=2,cex=cex)
+    ## points(tmp[,1], tmp[,yind] / c.unit, ty="b",
+    ##        col="darkorange",pch=16,lwd=1.5,cex=cex)
     axis(4)
     if(c.unit == 1){
         addi <- "[t]"
