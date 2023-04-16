@@ -62,6 +62,7 @@ run.mse.one.rep <- function(x, pars, first.esb.is.obs = TRUE){
                 ## Surplus production (sp)
                 sp[year,ms,scen] <- calc.prod(esb[year,ms,scen], as.list(scenarios[scen,]), type = pars$prod.type)
                 ## White process noise on surplus production (environment, interspecific interactions, etc.)
+                ## CHECK: allow negative sp?
                 spPro[year,ms,scen] <- add.log.noise(sp[year,ms,scen], noiseProList[[indPro]][year])
                 ## TODO: if sdPro == CV:
                 ## spPro[year,ms,scen] <- add.noise(sp[year,ms,scen],
@@ -89,6 +90,7 @@ run.mse.one.rep <- function(x, pars, first.esb.is.obs = TRUE){
                                       apply.hcr(HCR, biomass = ssbObs[year,ms,scen], refs = pars$refs),
                                       noiseImpList[[indImp]][year])
                     esb.next <- esb[year,ms,scen] + spPro[year,ms,scen] - yimp.cur
+                    if(is.na(esb.next)) browser()
                     esb.next <- ifelse(esb.next < 0, 0.001, esb.next)
                     if(!first.esb.is.obs || year > 1){
                         esb.next <- add.log.noise(esb.next, noiseObsList[[indObs]][year])

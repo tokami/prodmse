@@ -88,7 +88,8 @@ sim.noise <- function(sigma, n = 1){
 #'
 #' @export
 add.log.noise <- function(val, noise){
-    exp(log(val) + noise)
+    ## exp(log(val) + noise)
+    val * exp(noise)
 }
 
 
@@ -326,6 +327,7 @@ run.explo <- function(mse, yr = NULL, fmsy = seq(0.1,1,0.05),
     scenarios.par <- define.scenarios(pars)
     nscen.par <- nrow(scenarios.par)
     nms <- length(pars$HCR)
+
 
     ## Run
     ## if(mc.cores > 1){
